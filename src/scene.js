@@ -79,8 +79,8 @@ export function mountOffice(canvas,journey){
  function windowAt(x,z){box(1.8,2.1,.18,x,2.45,z,wood);box(1.57,1.9,.2,x,2.45,z+.02,glass);box(.07,1.95,.24,x,2.45,z+.13,wood);box(1.6,.07,.24,x,2.8,z+.13,wood);}
  for(const x of [-10,-7,-4,4,7,10])windowAt(x,4.59);
  for(const x of [-2.15,2.15]){box(.75,2,.2,x,2.4,7.1,wood);box(.6,1.8,.22,x,2.4,7.12,glass);}
- const sign=document.createElement('canvas');sign.width=512;sign.height=200;const ctx=sign.getContext('2d');ctx.fillStyle='#f5f4e8';ctx.fillRect(0,0,512,200);ctx.fillStyle='#25668a';ctx.font='bold 33px sans-serif';ctx.textAlign='center';ctx.fillText('DISKOMINFOSTANDI',256,85);ctx.font='24px sans-serif';ctx.fillText('KABUPATEN PULANG PISAU',256,128);
- const plaque=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.86),new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(sign)}));plaque.position.set(0,5.45,10.57);scene.add(plaque);
+ const logoTexture=new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}assets/logo-kominfo.png`);logoTexture.colorSpace=THREE.SRGBColorSpace;
+ const plaque=new THREE.Mesh(new THREE.PlaneGeometry(1.1,1.1),new THREE.MeshStandardMaterial({map:logoTexture,transparent:true,roughness:.8,emissive:'#ffffff',emissiveMap:logoTexture,emissiveIntensity:.15}));plaque.position.set(0,5.45,10.58);scene.add(plaque);
  let seed=42;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  function tree(x,z,s){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.15*s,.24*s,3.8*s,7),wood);trunk.position.set(x,1.9*s,z);scene.add(trunk);for(let i=0;i<5;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry((1.6+rnd()*.6)*s,2),leaf);crown.position.set(x+(rnd()-.5)*2*s,(4+rnd()*1.5)*s,z+(rnd()-.5)*2*s);crown.scale.y=.8;crown.castShadow=true;scene.add(crown);}}
  for(const [x,z,s] of [[-17,0,1.6],[15,8,1],[-15,14,1.2],[-10,-10,1.7],[11,-9,1.8],[22,-7,2],[-23,-9,2]])tree(x,z,s);
