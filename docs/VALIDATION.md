@@ -11,3 +11,6 @@
 - Screenshot desktop, pintu masuk, sambutan dan mobile ada di `artifacts/` (diabaikan Git).
 
 Belum diuji: WordPress/Elementor, database lama, pengiriman formulir eksternal, perangkat mobile fisik, performa GPU perangkat rendah, ketepatan titik peta, dan semua tujuan eksternal. Peta adalah tautan pencarian alamat, bukan koordinat terverifikasi. Tidak ada formulir yang dikirim selama pengujian.
+
+## Revisi scroll dan tema
+Build lulus. Chromium: scene WebGL aktif, progress scroll maju/mundur, header tersembunyi di awal dan muncul pada sambutan, pencarian email, mobile tanpa overflow, perubahan reduced-motion tanpa error teardown. Efek cahaya memakai lampu dan halo sprite, belum bloom penuh. Penyebab kegagalan 3D pada perangkat pengguna belum dapat dipastikan.

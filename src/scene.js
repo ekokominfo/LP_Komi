@@ -89,16 +89,23 @@ export function mountOffice(canvas,journey){
  for(const [x,z,s] of [[-17,0,1.6],[15,8,1],[-15,14,1.2],[-10,-10,1.7],[11,-9,1.8],[22,-7,2],[-23,-9,2]])tree(x,z,s);
  for(const x of [-4.4,4.4]){box(1.8,.35,1.5,x,.2,9,white);tree(x,9,.48);}
  for(let i=0;i<10;i++){box(.025,.005,27,-18+i*4,.04,17,mat('#929b91'));}
+ const lamp=new THREE.PointLight('#ffd483',110,14,2);lamp.position.set(0,3.5,8.7);scene.add(lamp);
+ const blueLamp=new THREE.PointLight('#4ca9d7',55,12,2);blueLamp.position.set(-2,2,7.8);scene.add(blueLamp);
+ const bulb=new THREE.Mesh(new THREE.SphereGeometry(.09,12,8),new THREE.MeshBasicMaterial({color:'#ffe5ac'}));bulb.position.copy(lamp.position);scene.add(bulb);
+ const haloCanvas=document.createElement('canvas');haloCanvas.width=haloCanvas.height=128;
+ const haloContext=haloCanvas.getContext('2d'),gradient=haloContext.createRadialGradient(64,64,0,64,64,64);
+ gradient.addColorStop(0,'rgba(255,226,163,.85)');gradient.addColorStop(.16,'rgba(255,209,120,.35)');gradient.addColorStop(1,'rgba(255,209,120,0)');haloContext.fillStyle=gradient;haloContext.fillRect(0,0,128,128);
+ const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(haloCanvas),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));halo.position.copy(lamp.position);halo.scale.set(2.4,2.4,1);scene.add(halo);
  const clock=new THREE.Clock();let frameId=0,disposed=false,active=true,progress=0;
  function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();schedule();}
  function render(){if(disposed)return;const rect=journey.getBoundingClientRect();const target=THREE.MathUtils.clamp(-rect.top/(journey.offsetHeight-innerHeight),0,1);progress=target;const p=progress;const ease=p*p*(3-2*p);const mobile=innerWidth<700;
  camera.position.set(THREE.MathUtils.lerp(mobile?7:11,0,Math.min(1,ease*2)),THREE.MathUtils.lerp(8,2.3,ease),THREE.MathUtils.lerp(mobile?49:38,5.8,ease));camera.lookAt(0,THREE.MathUtils.lerp(2.7,2.3,ease),4);
- canvas.style.opacity=String(1-THREE.MathUtils.smoothstep(p,.91,1));document.documentElement.style.setProperty('--journey',p);renderer.render(scene,camera);clock.getDelta();frameId=0;}
+ canvas.style.opacity=String(1-THREE.MathUtils.smoothstep(p,.91,1));document.documentElement.style.setProperty('--journey',p);lamp.intensity=(100+progress*90)*(1+.06*Math.sin(performance.now()*.0015));blueLamp.intensity=45+progress*35;renderer.render(scene,camera);clock.getDelta();frameId=active&&!document.hidden?requestAnimationFrame(render):0;}
  function schedule(){if(!disposed&&active&&!frameId)frameId=requestAnimationFrame(render);}addEventListener('scroll',schedule,{passive:true});
- const observer=new IntersectionObserver(entries=>{active=entries[0].isIntersecting;if(active){cancelAnimationFrame(frameId);render();}else cancelAnimationFrame(frameId);});observer.observe(journey);
- function visibility(){active=!document.hidden&&journey.getBoundingClientRect().bottom>0;if(active){cancelAnimationFrame(frameId);render();}else cancelAnimationFrame(frameId);}
+ const observer=new IntersectionObserver(entries=>{active=entries[0].isIntersecting;if(active){cancelAnimationFrame(frameId);render();}else {cancelAnimationFrame(frameId);frameId=0;}});observer.observe(journey);
+ function visibility(){active=!document.hidden&&journey.getBoundingClientRect().bottom>0;if(active){cancelAnimationFrame(frameId);render();}else {cancelAnimationFrame(frameId);frameId=0;}}
  function lost(e){e.preventDefault();canvas.hidden=true;journey.classList.add('static-scene');dispose();}
  function motion(){if(reduced.matches){canvas.hidden=true;journey.classList.add('static-scene');dispose();}}
- function dispose(){disposed=true;cancelAnimationFrame(frameId);observer.disconnect();removeEventListener('resize',resize);removeEventListener('scroll',schedule);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',motion);canvas.removeEventListener('webglcontextlost',lost);scene.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose();}});renderer.dispose();}
+ function dispose(){disposed=true;cancelAnimationFrame(frameId);observer.disconnect();removeEventListener('resize',resize);removeEventListener('scroll',schedule);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',motion);canvas.removeEventListener('webglcontextlost',lost);scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.map?.dispose();m.dispose();}}});renderer.dispose();}
  canvas.addEventListener('webglcontextlost',lost);reduced.addEventListener('change',motion);document.addEventListener('visibilitychange',visibility);addEventListener('resize',resize);resize();render();return dispose;
 }
