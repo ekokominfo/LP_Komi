@@ -1,0 +1,1 @@
+<form role="search" method="get" class="wp-search" action="<?php echo esc_url(home_url('/')); ?>"><label class="screen-reader-text" for="komi-search">Cari informasi</label><input id="komi-search" type="search" name="s" value="<?php echo get_search_query(); ?>" placeholder="Cari informasi…"><button type="submit">Cari</button></form>
