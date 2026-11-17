@@ -33,6 +33,7 @@ const entries=[...fields.map(f=>({title:f.title,desc:'Bidang & Sekretariat',url:
 function search(){const q=input.value.trim().toLocaleLowerCase('id');const matches=entries.filter(e=>(e.title+' '+(e.desc||'')).toLocaleLowerCase('id').includes(q));results.replaceChildren();if(!matches.length){results.textContent='Tidak ada hasil. Coba kata “layanan”, “email”, atau “bidang”.';return;}for(const e of matches){const a=document.createElement('a');a.href=e.url;a.textContent=e.title+' ↗';if(!e.url.startsWith('#')){a.target='_blank';a.rel='noopener noreferrer';}a.addEventListener('click',()=>dialog.close());results.append(a);}}
 document.querySelector('#search-open').addEventListener('click',()=>{dialog.showModal();search();input.focus();});document.querySelector('#search-close').addEventListener('click',()=>dialog.close());input.addEventListener('input',search);dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom))dialog.close();});addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();if(dialog.open){e.preventDefault();dialog.close();}}});
 const journey=document.querySelector('.journey'),canvas=document.querySelector('#office');
+document.querySelector('#load-progress').value=45;document.querySelector('#load-label').textContent='Menyiapkan kantor…';await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 try{const dispose=mountOffice(canvas,journey);if(!dispose){canvas.hidden=true;journey.classList.add('static-scene');}else{journey.classList.add('has-3d');addEventListener('pagehide',dispose,{once:true});}}catch(error){canvas.hidden=true;journey.classList.add('static-scene');console.warn('Adegan 3D tidak tersedia',error);}
 
 const header=document.querySelector('.header');
@@ -45,3 +46,9 @@ for(const el of document.querySelectorAll('.text-link,.nav-cta,.service-arrow,.c
  const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
  for(const node of nodes){if(node.textContent.includes('↗')){const span=document.createElement('span');span.textContent=node.textContent.replace('↗','');span.insertAdjacentHTML('beforeend',arrowMarkup);node.replaceWith(span);}}
 }
+
+const toggle=document.createElement('button');toggle.className='theme-toggle';toggle.textContent='Mode malam';toggle.setAttribute('aria-pressed','false');document.body.append(toggle);
+toggle.addEventListener('click',()=>{const night=document.documentElement.dataset.theme!=='night';document.documentElement.dataset.theme=night?'night':'day';toggle.textContent=night?'Mode siang':'Mode malam';toggle.setAttribute('aria-pressed',String(night));dispatchEvent(new Event('komi-theme'));});
+document.querySelector('#load-progress').value=100;document.querySelector('#load-label').textContent='Siap';
+await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+document.querySelector('#preloader').classList.add('loaded');setTimeout(()=>document.querySelector('#preloader')?.remove(),500);

@@ -23,3 +23,11 @@
 - Ikon panah utama menggunakan SVG.
 - Workflow GitHub Pages disiapkan. Aktivasi melalui API ditolak 403 Resource not accessible by integration. Pengguna perlu memilih Settings → Pages → Source: GitHub Actions.
 - PNG asli Kominfo/Pulpis belum tersedia sebagai file; integrasi aset tertunda.
+
+## Mode malam dan loading
+- Bangunan tambahan kanan-kiri dihapus dari model.
+- Header tanpa kotak biru, nama dinas tetap tampil; pemasangan logo asli masih terblokir ketiadaan file unggahan.
+- Tombol mode malam/siang tersedia sejak beranda. Lampu dan jendela menghangat, kunang-kunang bergerak hanya saat malam. Desktop 55 sprite, mobile 24.
+- Cahaya biru bergerak di halaman, kamera tetap ditentukan scroll.
+- Loading mengikuti tahap modul/scene/frame siap (indikator tahap, bukan ukuran unduhan byte), lalu fade out. Fallback juga menutup loader.
+- Logo papan kantor dan ikon Pulpis belum terpasang: file yang tersedia masih hanya logo lama yang tidak boleh dipakai pengguna.
